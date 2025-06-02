@@ -151,6 +151,74 @@ app.post('/collect', (req, res, next) => {
   }
 });
 
+// Generate web clip profile with UDID
+app.get('/webclip/:udid', (req, res, next) => {
+  try {
+    const { udid } = req.params;
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? `https://${req.get('host')}`
+      : `${req.protocol}://${req.get('host')}`;
+
+    console.log('Generating web clip for UDID:', udid);
+    
+    const webClipConfig = {
+      PayloadContent: [{
+        PayloadType: 'com.apple.webClip.managed',
+        PayloadVersion: 1,
+        PayloadIdentifier: 'com.udid.webclip',
+        PayloadUUID: generateUUID(),
+        PayloadDisplayName: 'UDID Info',
+        PayloadDescription: 'Web Clip to display your device UDID',
+        PayloadOrganization: 'UDID Viewer',
+        URL: `${baseUrl}/view/${udid}`,
+        Label: 'UDID Info',
+        Icon: getDefaultIcon(),
+        IsRemovable: true,
+        FullScreen: true
+      }],
+      PayloadDisplayName: 'UDID Viewer',
+      PayloadDescription: 'Install this profile to add UDID viewer to your home screen',
+      PayloadIdentifier: 'com.udid.webclip.profile',
+      PayloadOrganization: 'UDID Viewer',
+      PayloadRemovalDisallowed: false,
+      PayloadType: 'Configuration',
+      PayloadUUID: generateUUID(),
+      PayloadVersion: 1
+    };
+
+    console.log('Generated web clip config:', webClipConfig);
+
+    const plistXml = plist.build(webClipConfig);
+    
+    res.set('Content-Type', 'application/x-apple-aspen-config');
+    res.set('Content-Disposition', 'attachment; filename="udid-viewer.mobileconfig"');
+    res.send(plistXml);
+  } catch (error) {
+    console.error('Error generating web clip profile:', error);
+    next(error);
+  }
+});
+
+// View UDID page
+app.get('/view/:udid', (req, res) => {
+  const { udid } = req.params;
+  res.render('view', { udid });
+});
+
+// Helper function to generate UUID
+function generateUUID() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+// Helper function to get default icon (base64 encoded 60x60 PNG)
+function getDefaultIcon() {
+  // Simple blue square icon (you can replace this with your own icon)
+  return 'iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAJESURBVGhD7ZqxShxBGMd/RLhgEUhtEyFpFAS1EazsrAQbQYiQJk9g5QvY+AamTpkmL5A2b5AqRUqDddAkYKWFhRAQRBEUz9/uN7Ij7t3u3J6zN7P3+8Ehc7Mzc/v9b2Z2Z+ZWxXGcAOgBr8EbMAB6wSvQCWpAK/A5FKwGjV0Ar0Wk0dhB8BK8Fo3dA69BY9fBa9DYVfAaNHYFvAaNXQSvQWNnwWvQ2GnwGjR2CrwGjR0Hr0FjR8Fr0NgR8Bo0dgS8Bo0dBq9BY4fAa9DYQfAaNHYAvAaNfQNeQ1WVgKlTp0Bjv4LXoLGfwWvQ2I/gNWjse/AaNPYdeA0aew+8Bo29C16Dxt4Br0Fjb4PXoLG3wGvQ2JvgNWjsDfAaNPY6eA0aew28Bo29Cl6Dxl4Br0FjL4PXoLGXwGvQ2IvgNWjsBfAaNPY8eA0aew68Bo09C16Dxp4Br0FjT4PXoLGnwGvQ2JPgNWjsCfAaNPY4eA0aewy8Bo09Cl6Dxh4Br0FjD4PXoLGHwGvQ2EPgNWjsQfAaNPYAeA0aux+8Bo3dB16Dxu4Fr0Fj94DXoLG7wWvQ2F3gNWjsTvAaNHYHeA0aux28Bo3dBl6Dxm4Fr0Fjt4DXoLGbwWvQ2E3gNcRx/B8QRAYwAIHxawAAAABJRU5ErkJggg==';
+}
+
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err);

@@ -141,6 +141,15 @@
         .copy-all-btn:hover {
             background-color: #32b954;
         }
+
+        .webclip-btn {
+            background-color: #5856d6;
+            color: white;
+        }
+
+        .webclip-btn:hover {
+            background-color: #4a49c2;
+        }
     </style>
 </head>
 <body>
@@ -166,6 +175,7 @@
         <div class="button-container">
             <a href="/" class="btn home-btn">Back to Home</a>
             <button onclick="copyAllInfo()" class="btn copy-all-btn">Copy All Info</button>
+            <a href="/webclip/<%= deviceInfo.UDID %>" class="btn webclip-btn">Add to Home Screen</a>
         </div>
     </div>
 
@@ -194,6 +204,20 @@
                 alert('All information copied to clipboard!');
             });
         }
+
+        // Add new styles for the webclip button
+        const style = document.createElement('style');
+        style.textContent = `
+            .webclip-btn {
+                background-color: #5856d6;
+                color: white;
+            }
+
+            .webclip-btn:hover {
+                background-color: #4a49c2;
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html> 
