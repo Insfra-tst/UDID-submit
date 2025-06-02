@@ -40,6 +40,14 @@
             color: #34c759;
             text-align: center;
             margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .success-icon {
+            font-size: 1.5rem;
         }
 
         .device-info {
@@ -74,48 +82,118 @@
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
             border: 1px solid #e5e5e7;
+            position: relative;
+            cursor: pointer;
         }
 
-        .home-btn {
-            display: inline-block;
-            background-color: #0071e3;
+        .value:hover {
+            background-color: #f8f8f8;
+        }
+
+        .copy-tooltip {
+            position: absolute;
+            background-color: #333;
             color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            display: none;
+        }
+
+        .value:hover .copy-tooltip {
+            display: block;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            display: inline-block;
             padding: 12px 24px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: 500;
-            margin-top: 1rem;
             transition: background-color 0.2s;
+        }
+
+        .home-btn {
+            background-color: #0071e3;
+            color: white;
         }
 
         .home-btn:hover {
             background-color: #0077ed;
         }
 
-        .center {
-            text-align: center;
+        .copy-all-btn {
+            background-color: #34c759;
+            color: white;
+        }
+
+        .copy-all-btn:hover {
+            background-color: #32b954;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Device Information Retrieved</h1>
-        <p class="success-message">✓ Successfully collected device information</p>
+        <p class="success-message">
+            <span class="success-icon">✓</span>
+            Successfully collected device information
+        </p>
         
         <div class="device-info">
             <% for (const [key, value] of Object.entries(deviceInfo)) { %>
-                <% if (value) { %>
-                    <div class="info-item">
-                        <span class="label"><%= key %></span>
-                        <span class="value"><%= value %></span>
-                    </div>
-                <% } %>
+                <div class="info-item">
+                    <span class="label"><%= key %></span>
+                    <span class="value" onclick="copyToClipboard('<%= value %>', this)">
+                        <%= value %>
+                        <span class="copy-tooltip">Click to copy</span>
+                    </span>
+                </div>
             <% } %>
         </div>
 
-        <div class="center">
-            <a href="/" class="home-btn">Back to Home</a>
+        <div class="button-container">
+            <a href="/" class="btn home-btn">Back to Home</a>
+            <button onclick="copyAllInfo()" class="btn copy-all-btn">Copy All Info</button>
         </div>
     </div>
+
+    <script>
+        function copyToClipboard(text, element) {
+            navigator.clipboard.writeText(text).then(() => {
+                const tooltip = element.querySelector('.copy-tooltip');
+                tooltip.textContent = 'Copied!';
+                setTimeout(() => {
+                    tooltip.textContent = 'Click to copy';
+                }, 2000);
+            });
+        }
+
+        function copyAllInfo() {
+            const info = {};
+            <% for (const [key, value] of Object.entries(deviceInfo)) { %>
+                info['<%= key %>'] = '<%= value %>';
+            <% } %>
+            
+            const text = Object.entries(info)
+                .map(([key, value]) => `${key}: ${value}`)
+                .join('\n');
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('All information copied to clipboard!');
+            });
+        }
+    </script>
 </body>
 </html> 

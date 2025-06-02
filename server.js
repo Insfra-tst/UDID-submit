@@ -42,10 +42,16 @@ app.get('/', (req, res, next) => {
 // Generate and serve the mobile config profile
 app.get('/profile', (req, res, next) => {
   try {
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? `https://${req.get('host')}`
+      : `${req.protocol}://${req.get('host')}`;
+
+    console.log('Base URL for profile:', baseUrl);
+    
     const profileConfig = {
       PayloadContent: [{
         PayloadContent: {
-          URL: `${req.protocol}://${req.get('host')}/collect`,
+          URL: `${baseUrl}/collect`,
           DeviceAttributes: [
             'UDID',
             'IMEI',
@@ -54,22 +60,26 @@ app.get('/profile', (req, res, next) => {
             'PRODUCT'
           ]
         },
-        PayloadOrganization: 'Your Organization',
+        PayloadOrganization: 'UDID Collector',
         PayloadDisplayName: 'Device UDID Profile',
         PayloadVersion: 1,
         PayloadUUID: 'BF620D67-2340-4CED-A0F6-50B3945E2314',
-        PayloadIdentifier: 'com.example.profile',
+        PayloadIdentifier: 'com.udid.profile',
         PayloadDescription: 'This profile will help retrieve your device UDID',
-        PayloadType: 'Profile Service'
+        PayloadType: 'Profile Service',
+        PayloadRemovalDisallowed: false
       }],
       PayloadDisplayName: 'Device UDID Profile',
-      PayloadOrganization: 'Your Organization',
-      PayloadIdentifier: 'com.example.profile',
+      PayloadOrganization: 'UDID Collector',
+      PayloadIdentifier: 'com.udid.profile',
       PayloadUUID: 'BF620D67-2340-4CED-A0F6-50B3945E2314',
       PayloadDescription: 'This profile will help retrieve your device UDID',
       PayloadVersion: 1,
-      PayloadType: 'Configuration'
+      PayloadType: 'Configuration',
+      PayloadRemovalDisallowed: false
     };
+
+    console.log('Generated profile config:', profileConfig);
 
     const plistXml = plist.build(profileConfig);
     
@@ -85,28 +95,45 @@ app.get('/profile', (req, res, next) => {
 // Handle the device information submission
 app.post('/collect', (req, res, next) => {
   try {
+    console.log('Headers:', req.headers);
+    console.log('Content-Type:', req.headers['content-type']);
+    console.log('Body type:', typeof req.body);
+    console.log('Raw body:', req.body);
+
     if (!req.body) {
+      console.error('No request body received');
       throw new Error('No data received');
     }
 
-    const data = plist.parse(req.body.toString());
-    console.log('Received device data:', data); // Add logging
-
-    const deviceInfo = data.UDID ? {
-      UDID: data.UDID,
-      IMEI: data.IMEI,
-      ICCID: data.ICCID,
-      VERSION: data.VERSION,
-      PRODUCT: data.PRODUCT
-    } : null;
-
-    if (deviceInfo) {
-      res.render('success', { deviceInfo });
-    } else {
-      res.render('error', { message: 'No device information received' });
+    let data;
+    try {
+      // If body is a Buffer, convert to string
+      const bodyString = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : req.body.toString();
+      console.log('Body string:', bodyString);
+      data = plist.parse(bodyString);
+      console.log('Parsed plist data:', data);
+    } catch (parseError) {
+      console.error('Error parsing plist:', parseError);
+      throw new Error('Failed to parse device information');
     }
+
+    if (!data || !data.UDID) {
+      console.error('No UDID in parsed data:', data);
+      throw new Error('No UDID found in device information');
+    }
+
+    const deviceInfo = {
+      UDID: data.UDID || 'Not provided',
+      IMEI: data.IMEI || 'Not provided',
+      ICCID: data.ICCID || 'Not provided',
+      VERSION: data.VERSION || 'Not provided',
+      PRODUCT: data.PRODUCT || 'Not provided'
+    };
+
+    console.log('Final device info:', deviceInfo);
+    res.render('success', { deviceInfo });
   } catch (error) {
-    console.error('Error processing device information:', error);
+    console.error('Error in /collect endpoint:', error);
     next(error);
   }
 });
