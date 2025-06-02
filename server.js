@@ -50,38 +50,30 @@ app.get('/profile', (req, res, next) => {
     
     const profileConfig = {
       PayloadContent: [{
-        PayloadContent: {
-          URL: `${baseUrl}/collect`,
-          DeviceAttributes: [
-            'UDID',
-            'IMEI',
-            'ICCID',
-            'VERSION',
-            'PRODUCT'
-          ]
-        },
-        PayloadOrganization: 'UDID Collector',
-        PayloadDisplayName: 'Device UDID Profile',
+        PayloadType: 'com.apple.mgmt.External',
         PayloadVersion: 1,
+        PayloadIdentifier: 'com.udid.profile.credentials',
         PayloadUUID: 'BF620D67-2340-4CED-A0F6-50B3945E2314',
-        PayloadIdentifier: 'com.udid.profile',
-        PayloadDescription: 'This profile will help retrieve your device UDID',
-        PayloadType: 'Profile Service',
-        PayloadRemovalDisallowed: false
+        PayloadDisplayName: 'Device Information',
+        PayloadDescription: 'This profile will help retrieve your device information',
+        PayloadOrganization: 'UDID Collector',
+        Challenge: '',
+        URL: `${baseUrl}/collect`
       }],
       PayloadDisplayName: 'Device UDID Profile',
-      PayloadOrganization: 'UDID Collector',
-      PayloadIdentifier: 'com.udid.profile',
-      PayloadUUID: 'BF620D67-2340-4CED-A0F6-50B3945E2314',
       PayloadDescription: 'This profile will help retrieve your device UDID',
-      PayloadVersion: 1,
+      PayloadIdentifier: 'com.udid.profile',
+      PayloadOrganization: 'UDID Collector',
+      PayloadRemovalDisallowed: false,
       PayloadType: 'Configuration',
-      PayloadRemovalDisallowed: false
+      PayloadUUID: 'BF620D67-2340-4CED-A0F6-50B3945E2314',
+      PayloadVersion: 1
     };
 
     console.log('Generated profile config:', profileConfig);
 
     const plistXml = plist.build(profileConfig);
+    console.log('Generated plist XML:', plistXml);
     
     res.set('Content-Type', 'application/x-apple-aspen-config');
     res.set('Content-Disposition', 'attachment; filename="udid.mobileconfig"');
@@ -98,7 +90,7 @@ app.post('/collect', (req, res, next) => {
     console.log('Headers:', req.headers);
     console.log('Content-Type:', req.headers['content-type']);
     console.log('Body type:', typeof req.body);
-    console.log('Raw body:', req.body);
+    console.log('Raw body length:', req.body ? req.body.length : 0);
 
     if (!req.body) {
       console.error('No request body received');
@@ -107,31 +99,52 @@ app.post('/collect', (req, res, next) => {
 
     let data;
     try {
-      // If body is a Buffer, convert to string
-      const bodyString = Buffer.isBuffer(req.body) ? req.body.toString('utf8') : req.body.toString();
-      console.log('Body string:', bodyString);
-      data = plist.parse(bodyString);
-      console.log('Parsed plist data:', data);
+      // Handle different body formats
+      if (Buffer.isBuffer(req.body)) {
+        console.log('Body is Buffer');
+        data = plist.parse(req.body.toString('utf8'));
+      } else if (typeof req.body === 'string') {
+        console.log('Body is String');
+        data = plist.parse(req.body);
+      } else if (typeof req.body === 'object') {
+        console.log('Body is Object');
+        data = req.body;
+      } else {
+        throw new Error('Unsupported body format');
+      }
+      
+      console.log('Parsed data:', data);
     } catch (parseError) {
-      console.error('Error parsing plist:', parseError);
+      console.error('Error parsing data:', parseError);
       throw new Error('Failed to parse device information');
     }
 
-    if (!data || !data.UDID) {
-      console.error('No UDID in parsed data:', data);
-      throw new Error('No UDID found in device information');
-    }
-
+    // Extract UDID from different possible locations in the response
     const deviceInfo = {
-      UDID: data.UDID || 'Not provided',
-      IMEI: data.IMEI || 'Not provided',
-      ICCID: data.ICCID || 'Not provided',
-      VERSION: data.VERSION || 'Not provided',
-      PRODUCT: data.PRODUCT || 'Not provided'
+      UDID: data.UDID || data.device_id || data.deviceId || data.udid || 'Not provided',
+      IMEI: data.IMEI || data.imei || 'Not provided',
+      ICCID: data.ICCID || data.iccid || 'Not provided',
+      VERSION: data.VERSION || data.version || data.ProductVersion || 'Not provided',
+      PRODUCT: data.PRODUCT || data.product || data.ProductName || 'Not provided'
     };
 
     console.log('Final device info:', deviceInfo);
-    res.render('success', { deviceInfo });
+
+    if (deviceInfo.UDID === 'Not provided') {
+      console.log('Full response data for debugging:', JSON.stringify(data, null, 2));
+    }
+
+    res.format({
+      'application/xml': () => {
+        res.render('success', { deviceInfo });
+      },
+      'application/x-apple-aspen-config': () => {
+        res.render('success', { deviceInfo });
+      },
+      'default': () => {
+        res.render('success', { deviceInfo });
+      }
+    });
   } catch (error) {
     console.error('Error in /collect endpoint:', error);
     next(error);
