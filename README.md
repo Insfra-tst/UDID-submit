@@ -1,4 +1,4 @@
-# iOS UDID Grabber
+# UDID-submit
 
 A web application that helps you obtain the UDID (Unique Device Identifier) from iOS devices. This tool creates and serves a mobile configuration profile that, when installed on an iOS device, will send back the device's UDID and other relevant information.
 
@@ -8,6 +8,7 @@ A web application that helps you obtain the UDID (Unique Device Identifier) from
 - Collect device UDID, IMEI, ICCID, and other device information
 - Clean and modern web interface
 - Secure data handling
+- Automatic HTTPS with Vercel deployment
 
 ## Prerequisites
 
@@ -18,8 +19,8 @@ A web application that helps you obtain the UDID (Unique Device Identifier) from
 
 1. Clone this repository:
 ```bash
-git clone <repository-url>
-cd ios-udid-grabber
+git clone https://github.com/Insfra-tst/UDID-submit.git
+cd UDID-submit
 ```
 
 2. Install dependencies:
@@ -48,11 +49,22 @@ To run the server in development mode with auto-reload:
 npm run dev
 ```
 
+## Deployment
+
+This application is configured for easy deployment on Vercel:
+
+1. Fork this repository
+2. Sign up on [Vercel](https://vercel.com)
+3. Import your forked repository
+4. Deploy with default settings
+
+The application will be automatically deployed and available at your Vercel URL.
+
 ## Important Notes
 
 - The server must be accessible from the iOS device for the profile installation to work
 - If running locally, make sure both your computer and iOS device are on the same network
-- For production use, the server should be hosted with HTTPS enabled
+- For production use, HTTPS is automatically enabled when deployed on Vercel
 
 ## Security
 
