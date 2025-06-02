@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>UDID App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #1d1d1f;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .udid-container {
+            background-color: #f5f5f7;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 1.1rem;
+            position: relative;
+        }
+
+        .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .udid-value {
+            font-weight: bold;
+            color: #000;
+        }
+
+        .copy-btn {
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+        }
+
+        .copy-btn:hover {
+            background-color: #0077ed;
+        }
+
+        .copy-btn:active {
+            transform: scale(0.98);
+        }
+
+        .success-message {
+            color: #34c759;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .instructions {
+            background-color: #f5f5f7;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .instructions h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #1d1d1f;
+        }
+
+        .instructions ol {
+            padding-left: 1.5rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        .get-udid-btn {
+            background-color: #0071e3;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: background-color 0.2s;
+        }
+
+        .get-udid-btn:hover {
+            background-color: #0077ed;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>UDID App</h1>
+        
+        <% if (typeof udid !== 'undefined' && udid) { %>
+            <div class="udid-container">
+                <div class="label">Your Device UDID:</div>
+                <div class="udid-value" id="udid"><%= udid %></div>
+            </div>
+            <button class="copy-btn" onclick="copyUDID()">Copy UDID</button>
+            <p class="success-message" id="success">UDID copied to clipboard!</p>
+        <% } else { %>
+            <div class="instructions">
+                <h2>Get Your Device UDID</h2>
+                <ol>
+                    <li>Click the "Get UDID" button below</li>
+                    <li>Install the configuration profile when prompted</li>
+                    <li>Your UDID will be displayed here automatically</li>
+                </ol>
+                <a href="/profile" class="get-udid-btn">Get UDID</a>
+            </div>
+        <% } %>
+    </div>
+
+    <script>
+        function copyUDID() {
+            const udid = document.getElementById('udid').innerText.trim();
+            navigator.clipboard.writeText(udid).then(() => {
+                const successMsg = document.getElementById('success');
+                successMsg.style.display = 'block';
+                setTimeout(() => {
+                    successMsg.style.display = 'none';
+                }, 2000);
+            });
+        }
+
+        // Check for UDID in URL parameters
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const udid = urlParams.get('udid');
+            if (udid) {
+                // Remove the UDID from the URL without reloading the page
+                window.history.replaceState({}, document.title, '/app');
+            }
+        };
+    </script>
+</body>
+</html> 

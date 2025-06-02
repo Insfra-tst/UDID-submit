@@ -1,26 +1,23 @@
-# UDID-submit
+# iOS UDID App
 
-A web application that helps you obtain the UDID (Unique Device Identifier) from iOS devices. This tool creates and serves a mobile configuration profile that, when installed on an iOS device, will send back the device's UDID and other relevant information.
+A web application that helps iOS developers and users easily obtain their device's UDID (Unique Device Identifier). The app installs as a mobile web app and provides a simple interface to view and copy the UDID.
 
 ## Features
 
-- Generate and serve iOS mobile configuration profiles
-- Collect device UDID, IMEI, ICCID, and other device information
-- Clean and modern web interface
-- Secure data handling
-- Automatic HTTPS with Vercel deployment
-
-## Prerequisites
-
-- Node.js (v14 or higher)
-- npm (Node Package Manager)
+- One-click installation process
+- Installs as a home screen app
+- Instant UDID access
+- Easy copy functionality
+- Clean, modern interface
+- Secure UDID collection
+- No data storage - works directly on device
 
 ## Installation
 
-1. Clone this repository:
+1. Clone the repository:
 ```bash
-git clone https://github.com/Insfra-tst/UDID-submit.git
-cd UDID-submit
+git clone https://github.com/yourusername/UDID-App.git
+cd UDID-App
 ```
 
 2. Install dependencies:
@@ -28,48 +25,41 @@ cd UDID-submit
 npm install
 ```
 
-## Usage
-
-1. Start the server:
+3. Start the server:
 ```bash
 npm start
 ```
 
-2. Visit `http://localhost:3000` in your web browser
+The app will be available at `http://localhost:3000`
 
-3. Follow the on-screen instructions:
-   - Click the "Download Profile" button
-   - Install the profile on your iOS device
-   - View the device information on the success page
+## Usage
 
-## Development
+1. Visit the app URL on your iOS device
+2. Click "Install UDID App"
+3. Install the configuration profile when prompted
+4. Open the installed app from your home screen
+5. Your UDID will be displayed with a copy button
 
-To run the server in development mode with auto-reload:
-```bash
-npm run dev
-```
+## Technology Stack
 
-## Deployment
+- Node.js
+- Express.js
+- EJS Templates
+- Apple Configuration Profiles
 
-This application is configured for easy deployment on Vercel:
+## Requirements
 
-1. Fork this repository
-2. Sign up on [Vercel](https://vercel.com)
-3. Import your forked repository
-4. Deploy with default settings
-
-The application will be automatically deployed and available at your Vercel URL.
-
-## Important Notes
-
-- The server must be accessible from the iOS device for the profile installation to work
-- If running locally, make sure both your computer and iOS device are on the same network
-- For production use, HTTPS is automatically enabled when deployed on Vercel
-
-## Security
-
-This application only collects basic device information required for development purposes. No personal data is stored or transmitted beyond the initial request.
+- Node.js 14.0 or higher
+- iOS device for UDID collection
 
 ## License
 
-MIT 
+MIT License - feel free to use this in your own projects!
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iOS Device UDID Grabber</title>
+    <title>Install UDID App</title>
     <style>
         * {
             margin: 0;
@@ -15,10 +15,13 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
             color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
             background-color: #f5f5f7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
 
         .container {
@@ -26,100 +29,94 @@
             border-radius: 12px;
             padding: 2rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-top: 2rem;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
         }
 
         h1 {
             color: #1d1d1f;
             font-size: 2rem;
             margin-bottom: 1rem;
-            text-align: center;
         }
 
         .description {
-            color: #515154;
+            color: #666;
             margin-bottom: 2rem;
-            text-align: center;
         }
 
-        .steps {
-            margin: 2rem 0;
+        .features {
+            background-color: #f5f5f7;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: left;
         }
 
-        .step {
-            margin-bottom: 1.5rem;
-            padding-left: 2rem;
+        .features h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #1d1d1f;
+        }
+
+        .features ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .features li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
             position: relative;
         }
 
-        .step:before {
-            content: counter(step-counter);
-            counter-increment: step-counter;
+        .features li::before {
+            content: "✓";
             position: absolute;
             left: 0;
-            width: 24px;
-            height: 24px;
-            background-color: #0071e3;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
+            color: #34c759;
         }
 
-        .download-btn {
-            display: inline-block;
+        .install-btn {
             background-color: #0071e3;
             color: white;
+            text-decoration: none;
             padding: 12px 24px;
             border-radius: 8px;
-            text-decoration: none;
             font-weight: 500;
-            margin-top: 1rem;
+            display: inline-block;
             transition: background-color 0.2s;
         }
 
-        .download-btn:hover {
+        .install-btn:hover {
             background-color: #0077ed;
         }
 
         .note {
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: #f5f5f7;
-            border-radius: 8px;
+            color: #666;
             font-size: 0.9rem;
-            color: #515154;
+            margin-top: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>iOS Device UDID Grabber</h1>
-        <p class="description">Get your iOS device's UDID in just a few simple steps</p>
+        <h1>UDID App</h1>
+        <p class="description">Install the UDID App to easily access and copy your device's UDID anytime.</p>
         
-        <div class="steps">
-            <div class="step">
-                <h3>Download Profile</h3>
-                <p>Click the button below to download the configuration profile.</p>
-                <a href="/profile" class="download-btn">Download Profile</a>
-            </div>
-            
-            <div class="step">
-                <h3>Install Profile</h3>
-                <p>Open the downloaded profile and install it on your iOS device. You'll need to go to Settings and approve the profile installation.</p>
-            </div>
-            
-            <div class="step">
-                <h3>View Results</h3>
-                <p>After installation, your device information will be displayed on the next page.</p>
-            </div>
+        <div class="features">
+            <h2>Features</h2>
+            <ul>
+                <li>One-click installation</li>
+                <li>Instant UDID access</li>
+                <li>Easy copy functionality</li>
+                <li>Home screen app access</li>
+                <li>Clean, modern interface</li>
+            </ul>
         </div>
 
-        <div class="note">
-            <strong>Note:</strong> This process is completely secure and only collects basic device information needed for development purposes. No personal data is collected or stored.
-        </div>
+        <a href="/profile" class="install-btn">Install UDID App</a>
+        <p class="note">Compatible with iOS devices only</p>
     </div>
 </body>
 </html> 
