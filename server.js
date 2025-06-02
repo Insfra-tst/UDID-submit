@@ -34,7 +34,7 @@ app.get('/profile', (req, res) => {
       PayloadOrganization: 'Your Organization',
       PayloadDisplayName: 'Device UDID Profile',
       PayloadVersion: 1,
-      PayloadUUID: '7B5EA167-6CFE-4A0C-A086-49E3D8E6CA14',
+      PayloadUUID: 'BF620D67-2340-4CED-A0F6-50B3945E2314',
       PayloadIdentifier: 'com.example.profile',
       PayloadDescription: 'This profile will help retrieve your device UDID',
       PayloadType: 'Profile Service'
@@ -42,7 +42,7 @@ app.get('/profile', (req, res) => {
     PayloadDisplayName: 'Device UDID Profile',
     PayloadOrganization: 'Your Organization',
     PayloadIdentifier: 'com.example.profile',
-    PayloadUUID: '7B5EA167-6CFE-4A0C-A086-49E3D8E6CA14',
+    PayloadUUID: 'BF620D67-2340-4CED-A0F6-50B3945E2314',
     PayloadDescription: 'This profile will help retrieve your device UDID',
     PayloadVersion: 1,
     PayloadType: 'Configuration'
